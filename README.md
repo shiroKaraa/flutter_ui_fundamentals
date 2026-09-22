@@ -63,3 +63,7 @@ Penggunaan where((item) => item['done'] == true).length efektif untuk menghitung
 Tahap 12 :
 
 Function loadStudentData() menggunakan rootBundle.loadString() untuk membaca file dari asset bundle, lalu jsonDecode() mengubah String JSON menjadi Map<String, dynamic>. WidgetsFlutterBinding.ensureInitialized() diperlukan sebelum await di main() agar binding Flutter siap. JSON berhasil dibaca dan menampilkan 5 courses. Error umum: Unable to load asset → cek registrasi pubspec.yaml + jalankan flutter pub get; FormatException → cek tanda petik/koma/kurung JSON.
+
+Tahap 13 :
+
+FutureBuilder menghubungkan Future dari Dart dengan UI Flutter secara declaratif. late memungkinkan deklarasi studentFuture tanpa nilai awal, dan diisi di initState() sebelum build() pertama. Future wajib dibuat di initState(), bukan build(), agar tidak reload berulang. Tiga state wajib: waiting → CircularProgressIndicator, hasError → Text pesan error, data → render student & courses ke UI. Data kini berasal dari assets/data/student_data.json (bukan hardcode). Ringkasan dihitung dari JSON: courses.where((c) => c['status'] == 'done').length.

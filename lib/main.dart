@@ -5,7 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 const String studentName = 'I Kadek Dwi Bajaskara';
 const String studentId = '2415051068';
 
-// ===== FUNCTION PEMBACA JSON (TAHAP 12) =====
+// ===== FUNCTION PEMBACA JSON =====
 Future<Map<String, dynamic>> loadStudentData() async {
   final jsonString = await rootBundle.loadString(
     'assets/data/student_data.json',
@@ -13,21 +13,11 @@ Future<Map<String, dynamic>> loadStudentData() async {
   return jsonDecode(jsonString) as Map<String, dynamic>;
 }
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // ===== UJI COBA JSON (TAHAP 12) =====
-  final data = await loadStudentData();
-  debugPrint('===== DATA JSON =====');
-  debugPrint('Student: ${data['student']}');
-  debugPrint('Jumlah courses: ${(data['courses'] as List).length}');
-  debugPrint('Course pertama: ${(data['courses'] as List).first}');
-  debugPrint('=====================');
-
+void main() {
   runApp(const MyApp());
 }
 
-// REUSABLE WIDGET: Kartu Statistik
+// ===== REUSABLE WIDGET: Kartu Statistik =====
 Widget buildStatCard(String value, String label, Color color, IconData icon) {
   return Column(
     children: [
@@ -47,7 +37,7 @@ Widget buildStatCard(String value, String label, Color color, IconData icon) {
   );
 }
 
-// STATEFUL WIDGET: GreetingCard
+// ===== STATEFUL WIDGET: GreetingCard =====
 class GreetingCard extends StatefulWidget {
   const GreetingCard({super.key});
 
@@ -143,219 +133,313 @@ class _GreetingCardState extends State<GreetingCard> {
   }
 }
 
-// APP
+// ===== STATEful WIDGET: DashboardPage  =====
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  late Future<Map<String, dynamic>> studentFuture;
+  @override
+  void initState() {
+    super.initState();
+    studentFuture = loadStudentData();
+  }
+  // Helper warna status
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'done':
+        return Colors.green;
+      case 'active':
+        return Colors.orange;
+      default:
+        return Colors.blueGrey;
+    }
+  }
+
+  IconData _statusIcon(String status) {
+    switch (status) {
+      case 'done':
+        return Icons.check_circle;
+      case 'active':
+        return Icons.play_circle;
+      default:
+        return Icons.schedule;
+    }
+  }
+
+  String _statusLabel(String status) {
+    switch (status) {
+      case 'done':
+        return 'Selesai';
+      case 'active':
+        return 'Berjalan';
+      default:
+        return 'Belum';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F5FF),
+      appBar: AppBar(
+        title: const Text('Flutter UI Fundamentals'),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black87,
+      ),
+      body: SafeArea(
+        child: FutureBuilder<Map<String, dynamic>>(
+          future: studentFuture,
+          builder: (context, snapshot) {
+            // ===== 1. LOADING =====
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            // ===== 2. ERROR =====
+            if (snapshot.hasError) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    'Gagal memuat data: ${snapshot.error}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              );
+            }
+            // ===== 3. DATA =====
+            final data = snapshot.data!;
+            final student = data['student'] as Map<String, dynamic>;
+            final courses = data['courses'] as List<dynamic>;
+
+            final jsonName = student['name'] as String;
+            final jsonNim = student['nim'] as String;
+
+            // Ringkasan courses
+            final int totalCourses = courses.length;
+            final int completedCourses =
+                courses.where((c) => c['status'] == 'done').length;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
+
+                  // FOTO PROFIL
+                  const CircleAvatar(
+                    radius: 42,
+                    backgroundColor: Colors.deepPurple,
+                    backgroundImage: AssetImage('assets/images/profile.jpg'),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // CARD IDENTITAS (dari JSON)
+                  Card(
+                    elevation: 10,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            '$jsonNim - $jsonName',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Flutter UI Fundamentals',
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // DESKRIPSI MINAT
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple.withOpacity(0.07),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.deepPurple.withOpacity(0.25),
+                        width: 1,
+                      ),
+                    ),
+                    child: const Text(
+                      'Saya tertarik pada pemrograman mobile karena ingin belajar membuat aplikasi yang menarik, interaktif, dan bermanfaat bagi pengguna.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        height: 1.4,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // ICON + TEKS
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.phone_android,
+                          color: Colors.deepPurple, size: 20),
+                      SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'Mahasiswa Pendidikan Teknik Informatika',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // STATISTIK dari JSON
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      buildStatCard(
+                          '$totalCourses',
+                          'Topik',
+                          Colors.redAccent,
+                          Icons.book),
+                      buildStatCard(
+                          '$completedCourses',
+                          'Selesai',
+                          Colors.green,
+                          Icons.check_circle),
+                      buildStatCard(
+                        totalCourses == 0
+                          ? '0%'
+                          : '${((completedCourses / totalCourses) * 100).round()}%',
+                          'Progress',
+                          Colors.amber,
+                          Icons.trending_up),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // JUDUL + RINGKASAN
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Daftar Materi',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        '$completedCourses dari $totalCourses selesai',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  // LIST COURSES dari JSON
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: courses.length + 1,
+                      itemBuilder: (context, index) {
+                        // Index 0: GreetingCard
+                        if (index == 0) {
+                          return const Padding(
+                            padding: EdgeInsets.only(bottom: 6),
+                            child: GreetingCard(),
+                          );
+                        }
+
+                        // Index >= 1: course dari JSON
+                        final course =
+                            courses[index - 1] as Map<String, dynamic>;
+                        final status = course['status'] as String;
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 6),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ListTile(
+                            leading: Icon(
+                              _statusIcon(status),
+                              color: _statusColor(status),
+                            ),
+                            title: Text(
+                              course['title'] as String,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${course['code']} • ${course['credits']} SKS',
+                            ),
+                            trailing: Text(
+                              _statusLabel(status),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: _statusColor(status),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// ===== ROOT APP =====
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // ===== COLLECTION DART (masih dipakai di UI, akan diganti JSON di Tahap 13) =====
-    final List<Map<String, dynamic>> topics = [
-      {
-        'title': 'Git & GitHub',
-        'subtitle': 'Version control',
-        'done': true,
-      },
-      {
-        'title': 'Dart Fundamentals',
-        'subtitle': 'Language basics',
-        'done': true,
-      },
-      {
-        'title': 'Flutter UI Fundamentals',
-        'subtitle': 'Widgets & layout',
-        'done': false,
-      },
-      {
-        'title': '$studentId - $studentName',
-        'subtitle': 'Pemilik aplikasi',
-        'done': false,
-      },
-    ];
-
-    final int completed =
-        topics.where((item) => item['done'] == true).length;
-
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: const Color(0xFFF8F5FF),
-        appBar: AppBar(
-          title: const Text('Flutter UI Fundamentals'),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.black87,
-        ),
-
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                const CircleAvatar(
-                  radius: 42,
-                  backgroundColor: Colors.deepPurple,
-                  backgroundImage: AssetImage('assets/images/profile.jpg'),
-                ),
-                const SizedBox(height: 12),
-                Card(
-                  elevation: 10,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          '$studentId - $studentName',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'Flutter UI Fundamentals',
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple.withOpacity(0.07),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.deepPurple.withOpacity(0.25),
-                      width: 1,
-                    ),
-                  ),
-                  child: const Text(
-                    'Saya tertarik pada pemrograman mobile karena ingin belajar membuat aplikasi yang menarik, interaktif, dan bermanfaat bagi pengguna.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 13,
-                      height: 1.4,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.phone_android,
-                        color: Colors.deepPurple, size: 20),
-                    SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'Mahasiswa Pendidikan Teknik Informatika',
-                        style: TextStyle(fontSize: 13),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    buildStatCard(
-                        '8', 'Widget', Colors.redAccent, Icons.widgets),
-                    buildStatCard(
-                        '4', 'Layout', Colors.amber, Icons.dashboard),
-                    buildStatCard(
-                        '1', 'State', Colors.green, Icons.memory),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Daftar Topik',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    Text(
-                      '$completed dari ${topics.length} topik selesai',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black54,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: topics.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return const Padding(
-                          padding: EdgeInsets.only(bottom: 6),
-                          child: GreetingCard(),
-                        );
-                      }
-                      final item = topics[index - 1];
-                      final done = item['done'] as bool;
-
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 6),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: ListTile(
-                          leading: Icon(
-                            done ? Icons.check_circle : Icons.schedule,
-                            color: done ? Colors.green : Colors.orange,
-                          ),
-                          title: Text(
-                            item['title'] as String,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          subtitle: Text(item['subtitle'] as String),
-                          trailing: Text(
-                            done ? 'Selesai' : 'Belum',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: done ? Colors.green : Colors.orange,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      home: DashboardPage(),
     );
   }
 }
