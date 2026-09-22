@@ -6,6 +6,7 @@ const String studentId = '2415051068';
 void main() {
   runApp(const MyApp());
 }
+
 // REUSABLE WIDGET: Kartu Statistik
 Widget buildStatCard(String value, String label, Color color, IconData icon) {
   return Column(
@@ -152,6 +153,10 @@ class MyApp extends StatelessWidget {
       },
     ];
 
+    // ===== RINGKASAN COLLECTION (TAHAP 11) =====
+    final int completed =
+        topics.where((item) => item['done'] == true).length;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -266,17 +271,27 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                // JUDUL DAFTAR
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Daftar Topik',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                // JUDUL DAFTAR + RINGKASAN (TAHAP 11)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Daftar Topik',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
-                  ),
+                    Text(
+                      '$completed dari ${topics.length} topik selesai',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 6),
                 Expanded(
@@ -295,9 +310,11 @@ class MyApp extends StatelessWidget {
                       final item = topics[index - 1];
                       final done = item['done'] as bool;
 
+                      // ===== ITEM LIST INFORMATIF (TAHAP 11) =====
                       return Card(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 6),
                         elevation: 2,
-                        margin: const EdgeInsets.symmetric(vertical: 6),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -305,7 +322,7 @@ class MyApp extends StatelessWidget {
                           leading: Icon(
                             done
                                 ? Icons.check_circle
-                                : Icons.circle_outlined,
+                                : Icons.schedule,
                             color: done ? Colors.green : Colors.orange,
                           ),
                           title: Text(
@@ -315,6 +332,14 @@ class MyApp extends StatelessWidget {
                             ),
                           ),
                           subtitle: Text(item['subtitle'] as String),
+                          trailing: Text(
+                            done ? 'Selesai' : 'Belum',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: done ? Colors.green : Colors.orange,
+                            ),
+                          ),
                         ),
                       );
                     },
