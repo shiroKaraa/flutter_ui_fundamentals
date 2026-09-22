@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+
 const String studentName = 'I Kadek Dwi Bajaskara';
 const String studentId = '2415051068';
 
 void main() {
   runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,6 +30,7 @@ class MyApp extends StatelessWidget {
                 backgroundImage: AssetImage('assets/images/profile.jpg'),
               ),
               const SizedBox(height: 12),
+
               // ===== NAMA & NIM =====
               Text(
                 studentName,
@@ -41,6 +45,7 @@ class MyApp extends StatelessWidget {
               ),
 
               const SizedBox(height: 8),
+
               // ===== DESKRIPSI MINAT =====
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 32),
@@ -50,7 +55,9 @@ class MyApp extends StatelessWidget {
                   style: TextStyle(fontSize: 13, color: Colors.grey),
                 ),
               ),
+
               const SizedBox(height: 12),
+
               // ===== ICON + TEKS =====
               const Row(
                 mainAxisSize: MainAxisSize.min,
@@ -58,6 +65,54 @@ class MyApp extends StatelessWidget {
                   Icon(Icons.phone_android, color: Colors.deepPurple),
                   SizedBox(width: 8),
                   Text('Mahasiswa Pendidikan Teknik Informatika'),
+                ],
+              ),
+
+              const SizedBox(height: 30),
+
+              // ===== STATISTIK: Row of Columns m=====
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        '8',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                      Text('Widget'),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        '4',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.yellow,
+                        ),
+                      ),
+                      Text('Layout'),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        '1',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                      Text('State'),
+                    ],
+                  ),
                 ],
               ),
             ],
