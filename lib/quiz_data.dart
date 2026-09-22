@@ -63,7 +63,7 @@ const List<Map<String, dynamic>> quizQuestions = [
   },
   {
     'q': 'Tipe data Dart yang digunakan untuk menyimpan bilangan bulat?',
-    'options': ['Double', 'Int', 'IntegerValue'],
+    'options': ['Double', 'int', 'IntegerValue'],
     'answer': 'int',
   },
   {

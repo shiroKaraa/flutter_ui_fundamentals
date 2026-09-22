@@ -733,11 +733,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 height: 56,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return const Icon(
-                    Icons.person,
-                    size: 32,
-                    color: AppColors.primary,
-                  );
+                  return const Icon(Icons.person, size: 32, color: AppColors.primary);
                 },
               ),
             ),

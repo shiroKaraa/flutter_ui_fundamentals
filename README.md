@@ -220,5 +220,5 @@ Dari debugging ini saya belajar tiga hal: (1) RenderFlex Overflow diatasi dengan
 
 Tahap 16 :
 
-
+Saya menginisialisasi repository GitHub sejak Tahap 1 dan melakukan commit + push di setiap tahap pengerjaan, sehingga riwayat Git saya tersusun rapi dari Tahap 1 hingga Tahap 15 : DEBUG — total 17 commit dengan pesan yang bermakna dan mencerminkan progres alami praktikum. Setiap tahap saya beri pesan commit yang menjelaskan fokusnya (mis. Tahap 10 untuk collection list, Tahap 12 untuk JSON statik, Tahap 14 : Mini Project Integrasi: Learning Dashboard untuk integrasi final), dan pada beberapa tahap saya juga membuat commit tambahan seperti Tahap 1 Eksperimen dan Tahap 5 Revisi untuk merekam percobaan/revisi. Dengan pola ini, dosen dapat meninjau proses pengerjaan, bukan hanya hasil akhir — misalnya dapat melihat kapan FutureBuilder mulai dipakai (Tahap 13), kapan Mini Quiz ditambahkan (Tahap 14), dan bagaimana debugging dilakukan (Tahap 15). Saya juga memastikan .gitignore sudah mengecualikan folder build/ dan .dart_tool/ agar repository tetap bersih, serta tidak ada file sensitif (credential, keystore) yang ter-commit. Semua commit sudah di-push ke branch main dan hash commit terakhir (313ba72) tercatat sebagai checkpoint final praktikum ini.
 
