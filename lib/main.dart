@@ -1,9 +1,29 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 
 const String studentName = 'I Kadek Dwi Bajaskara';
 const String studentId = '2415051068';
 
-void main() {
+// ===== FUNCTION PEMBACA JSON (TAHAP 12) =====
+Future<Map<String, dynamic>> loadStudentData() async {
+  final jsonString = await rootBundle.loadString(
+    'assets/data/student_data.json',
+  );
+  return jsonDecode(jsonString) as Map<String, dynamic>;
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // ===== UJI COBA JSON (TAHAP 12) =====
+  final data = await loadStudentData();
+  debugPrint('===== DATA JSON =====');
+  debugPrint('Student: ${data['student']}');
+  debugPrint('Jumlah courses: ${(data['courses'] as List).length}');
+  debugPrint('Course pertama: ${(data['courses'] as List).first}');
+  debugPrint('=====================');
+
   runApp(const MyApp());
 }
 
@@ -129,7 +149,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ===== COLLECTION DART  =====
+    // ===== COLLECTION DART (masih dipakai di UI, akan diganti JSON di Tahap 13) =====
     final List<Map<String, dynamic>> topics = [
       {
         'title': 'Git & GitHub',
@@ -153,7 +173,6 @@ class MyApp extends StatelessWidget {
       },
     ];
 
-    // ===== RINGKASAN COLLECTION (TAHAP 11) =====
     final int completed =
         topics.where((item) => item['done'] == true).length;
 
@@ -169,21 +188,18 @@ class MyApp extends StatelessWidget {
           foregroundColor: Colors.black87,
         ),
 
-        // ===== BODY: COLUMN + EXPANDED =====
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
             child: Column(
               children: [
                 const SizedBox(height: 8),
-                // FOTO PROFIL
                 const CircleAvatar(
                   radius: 42,
                   backgroundColor: Colors.deepPurple,
                   backgroundImage: AssetImage('assets/images/profile.jpg'),
                 ),
                 const SizedBox(height: 12),
-                // CARD IDENTITAS
                 Card(
                   elevation: 10,
                   shape: RoundedRectangleBorder(
@@ -218,7 +234,6 @@ class MyApp extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 12),
-                // CONTAINER DESKRIPSI MINAT
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
@@ -242,7 +257,6 @@ class MyApp extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 12),
-                // ICON + TEKS
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -258,7 +272,6 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                // STATISTIK
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -271,7 +284,6 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                // JUDUL DAFTAR + RINGKASAN (TAHAP 11)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -296,21 +308,17 @@ class MyApp extends StatelessWidget {
                 const SizedBox(height: 6),
                 Expanded(
                   child: ListView.builder(
-                    // Tidak perlu shrinkWrap karena sudah dibatasi Expanded
                     itemCount: topics.length + 1,
                     itemBuilder: (context, index) {
-                      // Index 0: GreetingCard (interaksi input)
                       if (index == 0) {
                         return const Padding(
                           padding: EdgeInsets.only(bottom: 6),
                           child: GreetingCard(),
                         );
                       }
-                      // Index >= 1: item dari collection topics
                       final item = topics[index - 1];
                       final done = item['done'] as bool;
 
-                      // ===== ITEM LIST INFORMATIF (TAHAP 11) =====
                       return Card(
                         margin: const EdgeInsets.symmetric(
                             horizontal: 0, vertical: 6),
@@ -320,9 +328,7 @@ class MyApp extends StatelessWidget {
                         ),
                         child: ListTile(
                           leading: Icon(
-                            done
-                                ? Icons.check_circle
-                                : Icons.schedule,
+                            done ? Icons.check_circle : Icons.schedule,
                             color: done ? Colors.green : Colors.orange,
                           ),
                           title: Text(

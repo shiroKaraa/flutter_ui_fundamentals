@@ -59,3 +59,7 @@ Column + Expanded dipakai agar identitas tetap tampil di atas daftar. Expanded m
 Tahap 11 :
 
 Penggunaan where((item) => item['done'] == true).length efektif untuk menghitung item selesai dari List<Map<String, dynamic>>. Menambahkan trailing pada ListTile membuat status lebih eksplisit (teks + warna). Menggabungkan Row + spaceBetween untuk judul dan ringkasan membuat header list lebih informatif tanpa mengganggu layout Column + Expanded.
+
+Tahap 12 :
+
+Function loadStudentData() menggunakan rootBundle.loadString() untuk membaca file dari asset bundle, lalu jsonDecode() mengubah String JSON menjadi Map<String, dynamic>. WidgetsFlutterBinding.ensureInitialized() diperlukan sebelum await di main() agar binding Flutter siap. JSON berhasil dibaca dan menampilkan 5 courses. Error umum: Unable to load asset → cek registrasi pubspec.yaml + jalankan flutter pub get; FormatException → cek tanda petik/koma/kurung JSON.
