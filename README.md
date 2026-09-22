@@ -51,3 +51,7 @@ Reusable widget mengurangi duplikasi kode. buildStatCard dipanggil 3× dengan da
 Tahap 9 :
 
 StatefulWidget dipakai untuk UI yang berubah karena interaksi user. TextEditingController menangkap input, setState() memicu rebuild, dan dispose() membersihkan controller. Ini contoh nyata hubungan Dart (String, method, callback) dengan Flutter 
+
+Tahap 10 :
+
+Column + Expanded dipakai agar identitas tetap tampil di atas daftar. Expanded memberi tinggi terbatas ke ListView sehingga bisa scroll sendiri tanpa shrinkWrap. GreetingCard dipindah jadi item pertama list agar tidak mengganggu scroll. Struktur ini adalah pola umum di Flutter: header fixed + konten scrollable.

@@ -6,7 +6,7 @@ const String studentId = '2415051068';
 void main() {
   runApp(const MyApp());
 }
-
+// REUSABLE WIDGET: Kartu Statistik
 Widget buildStatCard(String value, String label, Color color, IconData icon) {
   return Column(
     children: [
@@ -26,6 +26,7 @@ Widget buildStatCard(String value, String label, Color color, IconData icon) {
   );
 }
 
+// STATEFUL WIDGET: GreetingCard
 class GreetingCard extends StatefulWidget {
   const GreetingCard({super.key});
 
@@ -55,15 +56,12 @@ class _GreetingCardState extends State<GreetingCard> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Judul + Identitas (untuk verifikasi screenshot)
             const Text(
               'Latihan Interaksi',
               textAlign: TextAlign.center,
@@ -80,8 +78,6 @@ class _GreetingCardState extends State<GreetingCard> {
               style: const TextStyle(fontSize: 12, color: Colors.black54),
             ),
             const SizedBox(height: 14),
-
-            // Input
             TextField(
               controller: controller,
               decoration: const InputDecoration(
@@ -91,8 +87,6 @@ class _GreetingCardState extends State<GreetingCard> {
               ),
             ),
             const SizedBox(height: 12),
-
-            // Tombol
             ElevatedButton.icon(
               onPressed: _tampilkanPesan,
               icon: const Icon(Icons.send),
@@ -104,8 +98,6 @@ class _GreetingCardState extends State<GreetingCard> {
               ),
             ),
             const SizedBox(height: 14),
-
-            // Hasil pesan
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
@@ -130,14 +122,36 @@ class _GreetingCardState extends State<GreetingCard> {
   }
 }
 
-// =====================================================
 // APP
-// =====================================================
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // ===== COLLECTION DART  =====
+    final List<Map<String, dynamic>> topics = [
+      {
+        'title': 'Git & GitHub',
+        'subtitle': 'Version control',
+        'done': true,
+      },
+      {
+        'title': 'Dart Fundamentals',
+        'subtitle': 'Language basics',
+        'done': true,
+      },
+      {
+        'title': 'Flutter UI Fundamentals',
+        'subtitle': 'Widgets & layout',
+        'done': false,
+      },
+      {
+        'title': '$studentId - $studentName',
+        'subtitle': 'Pemilik aplikasi',
+        'done': false,
+      },
+    ];
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -149,21 +163,22 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black87,
         ),
-        body: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+
+        // ===== BODY: COLUMN + EXPANDED =====
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // ===== FOTO PROFIL =====
+                const SizedBox(height: 8),
+                // FOTO PROFIL
                 const CircleAvatar(
-                  radius: 52,
+                  radius: 42,
                   backgroundColor: Colors.deepPurple,
                   backgroundImage: AssetImage('assets/images/profile.jpg'),
                 ),
-                const SizedBox(height: 20),
-
-                // ===== CARD IDENTITAS =====
+                const SizedBox(height: 12),
+                // CARD IDENTITAS
                 Card(
                   elevation: 10,
                   shape: RoundedRectangleBorder(
@@ -172,7 +187,7 @@ class MyApp extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
-                      vertical: 16,
+                      vertical: 12,
                     ),
                     child: Column(
                       children: [
@@ -184,12 +199,12 @@ class MyApp extends StatelessWidget {
                             fontSize: 16,
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 4),
                         const Text(
                           'Flutter UI Fundamentals',
                           style: TextStyle(
                             color: Colors.black54,
-                            fontSize: 14,
+                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -197,12 +212,11 @@ class MyApp extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 16),
-
-                // ===== CONTAINER DESKRIPSI =====
+                const SizedBox(height: 12),
+                // CONTAINER DESKRIPSI MINAT
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.deepPurple.withOpacity(0.07),
                     borderRadius: BorderRadius.circular(12),
@@ -215,32 +229,31 @@ class MyApp extends StatelessWidget {
                     'Saya tertarik pada pemrograman mobile karena ingin belajar membuat aplikasi yang menarik, interaktif, dan bermanfaat bagi pengguna.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 13.5,
+                      fontSize: 13,
                       height: 1.4,
                       color: Colors.black87,
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 20),
-
-                // ===== ICON + TEKS =====
+                const SizedBox(height: 12),
+                // ICON + TEKS
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.phone_android,
-                        color: Colors.deepPurple, size: 22),
+                        color: Colors.deepPurple, size: 20),
                     SizedBox(width: 8),
-                    Text(
-                      'Mahasiswa Pendidikan Teknik Informatika',
-                      style: TextStyle(fontSize: 14),
+                    Flexible(
+                      child: Text(
+                        'Mahasiswa Pendidikan Teknik Informatika',
+                        style: TextStyle(fontSize: 13),
+                      ),
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 28),
-
-                // ===== STATISTIK =====
+                const SizedBox(height: 16),
+                // STATISTIK
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -252,13 +265,61 @@ class MyApp extends StatelessWidget {
                         '1', 'State', Colors.green, Icons.memory),
                   ],
                 ),
-
-                const SizedBox(height: 28),
-
-                // ===== STATEFUL WIDGET: GreetingCard =====
-                const GreetingCard(),
-
                 const SizedBox(height: 16),
+                // JUDUL DAFTAR
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Daftar Topik',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Expanded(
+                  child: ListView.builder(
+                    // Tidak perlu shrinkWrap karena sudah dibatasi Expanded
+                    itemCount: topics.length + 1,
+                    itemBuilder: (context, index) {
+                      // Index 0: GreetingCard (interaksi input)
+                      if (index == 0) {
+                        return const Padding(
+                          padding: EdgeInsets.only(bottom: 6),
+                          child: GreetingCard(),
+                        );
+                      }
+                      // Index >= 1: item dari collection topics
+                      final item = topics[index - 1];
+                      final done = item['done'] as bool;
+
+                      return Card(
+                        elevation: 2,
+                        margin: const EdgeInsets.symmetric(vertical: 6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ListTile(
+                          leading: Icon(
+                            done
+                                ? Icons.check_circle
+                                : Icons.circle_outlined,
+                            color: done ? Colors.green : Colors.orange,
+                          ),
+                          title: Text(
+                            item['title'] as String,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Text(item['subtitle'] as String),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
