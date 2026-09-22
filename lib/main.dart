@@ -26,6 +26,113 @@ Widget buildStatCard(String value, String label, Color color, IconData icon) {
   );
 }
 
+class GreetingCard extends StatefulWidget {
+  const GreetingCard({super.key});
+
+  @override
+  State<GreetingCard> createState() => _GreetingCardState();
+}
+
+class _GreetingCardState extends State<GreetingCard> {
+  final TextEditingController controller = TextEditingController();
+  String message = 'Belum ada pesan';
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void _tampilkanPesan() {
+    setState(() {
+      message = controller.text.trim().isEmpty
+          ? 'Input masih kosong'
+          : controller.text.trim();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Judul + Identitas (untuk verifikasi screenshot)
+            const Text(
+              'Latihan Interaksi',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '$studentId - $studentName',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+            const SizedBox(height: 14),
+
+            // Input
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: 'Tulis pesan...',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.edit),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Tombol
+            ElevatedButton.icon(
+              onPressed: _tampilkanPesan,
+              icon: const Icon(Icons.send),
+              label: const Text('Tampilkan'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+            const SizedBox(height: 14),
+
+            // Hasil pesan
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple.withOpacity(0.06),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// =====================================================
+// APP
+// =====================================================
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -137,11 +244,21 @@ class MyApp extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    buildStatCard('8', 'Widget', Colors.redAccent, Icons.widgets),
-                    buildStatCard('4', 'Layout', Colors.amber, Icons.dashboard),
-                    buildStatCard('1', 'State', Colors.green, Icons.memory),
+                    buildStatCard(
+                        '8', 'Widget', Colors.redAccent, Icons.widgets),
+                    buildStatCard(
+                        '4', 'Layout', Colors.amber, Icons.dashboard),
+                    buildStatCard(
+                        '1', 'State', Colors.green, Icons.memory),
                   ],
                 ),
+
+                const SizedBox(height: 28),
+
+                // ===== STATEFUL WIDGET: GreetingCard =====
+                const GreetingCard(),
+
+                const SizedBox(height: 16),
               ],
             ),
           ),
