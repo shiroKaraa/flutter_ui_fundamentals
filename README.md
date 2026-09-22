@@ -67,3 +67,112 @@ Function loadStudentData() menggunakan rootBundle.loadString() untuk membaca fil
 Tahap 13 :
 
 FutureBuilder menghubungkan Future dari Dart dengan UI Flutter secara declaratif. late memungkinkan deklarasi studentFuture tanpa nilai awal, dan diisi di initState() sebelum build() pertama. Future wajib dibuat di initState(), bukan build(), agar tidak reload berulang. Tiga state wajib: waiting → CircularProgressIndicator, hasError → Text pesan error, data → render student & courses ke UI. Data kini berasal dari assets/data/student_data.json (bukan hardcode). Ringkasan dihitung dari JSON: courses.where((c) => c['status'] == 'done').length.
+
+Tahap 14 :
+
+Tahap 14 merupakan pengembangan dari Tahap 1–13, bukan aplikasi baru.
+
+Saya menambahkan Mini Quiz Akademik karena setelah membuat dashboard Tahap 14 saya merasa kontennya masih terlalu sedikit dan monoton, sehingga saya ingin dashboard lebih interaktif; Mini Quiz saya buat sebagai MiniQuizCard berisi 5 soal Dart/Flutter dengan feedback dan skor akhir, yang sekaligus memperkuat kembali konsep StatefulWidget dan setState() dari Tahap 9, dan data soalnya saya pisah ke lib/quiz_data.dart agar widget tetap ramping dan mudah dikembangkan.
+
+Widget Tree Target
+MaterialApp
+└── Scaffold
+    ├── AppBar
+    │   └── Text('Learning Dashboard')
+    │
+    └── SafeArea
+        └── FutureBuilder<Map<String, dynamic>>
+            │
+            ├── [waiting]  →  Center → CircularProgressIndicator
+            │
+            ├── [hasError] →  Center → Padding → Text('Gagal memuat data: ...')
+            │
+            └── [data]     →  Column
+                │
+                ├── Padding                        ← FIXED (di luar scroll)
+                │   └── Container                  ← Compact Identity Card
+                │       └── Row
+                │           ├── CircleAvatar
+                │           │   └── ClipOval
+                │           │       └── Image.asset (errorBuilder → Icon)
+                │           │
+                │           └── Expanded
+                │               └── Column
+                │                   ├── Text(name)
+                │                   ├── Text('NIM: ...')
+                │                   └── Text('Program • Semester ...')
+                │
+                └── Expanded                       ← SCROLLABLE
+                    └── ListView.builder
+                        │
+                        ├── [index 0] Summary Cards
+                        │   └── Padding → Row
+                        │       ├── buildStatCard('Total Topik')
+                        │       ├── buildStatCard('Selesai')
+                        │       └── buildStatCard('Progress')
+                        │
+                        ├── [index 1] Learning Goal
+                        │   └── Padding → Column
+                        │       ├── sectionTitle('Learning Goal')
+                        │       └── Container → Row
+                        │           ├── Icon(Icons.flag_outlined)
+                        │           └── Expanded → Text(learningGoal)
+                        │
+                        ├── [index 2] GreetingCard
+                        │   └── Card
+                        │       └── Padding → Column
+                        │           ├── Row (Icon + 'Latihan Interaksi')
+                        │           ├── Text(NIM - Nama)
+                        │           ├── TextField (controller)
+                        │           ├── ElevatedButton.icon
+                        │           └── Container → Text(message)
+                        │
+                        ├── [index 3] MiniQuizCard
+                        │   └── Card
+                        │       └── Padding → Column
+                        │           ├── Row (Icon + 'Mini Quiz Akademik')
+                        │           │
+                        │           ├── if (finished)
+                        │           │   └── _buildHasil()
+                        │           │       ├── Text('Skor kamu: x / 5')
+                        │           │       ├── Text('Nilai: xx')
+                        │           │       └── ElevatedButton.icon (Ulangi Quiz)
+                        │           │
+                        │           └── else
+                        │               └── _buildSoal()
+                        │                   ├── Text(pertanyaan)
+                        │                   ├── ...options.map() → InkWell → Container
+                        │                   │       ├── Icon (benar/salah/netral)
+                        │                   │       └── Text(opsi)
+                        │                   └── TextButton.icon ('Soal Berikutnya')
+                        │
+                        ├── [index 4] Judul Daftar Materi
+                        │   └── Padding → Row
+                        │       ├── sectionTitle('Daftar Materi')
+                        │       └── Text('x dari y selesai')
+                        │
+                        └── [index 5..N] Course Item (10×)
+                            └── _buildCourseCard()
+                                └── Card
+                                    └── Padding → Row
+                                        ├── Icon (status)
+                                        ├── Expanded → Column
+                                        │   ├── Text(title)
+                                        │   ├── Text('code • credits SKS')
+                                        │   ├── Text(description)
+                                        │   └── Text('Dosen: ...')
+                                        └── _statusBadge(status)
+
+Tree File Project
+flutter_ui_fundamentals/
+│
+├── lib/
+│   ├── main.dart                 ← UI utama + DashboardPage + GreetingCard + MiniQuizCard
+│   └── quiz_data.dart            ← data soal Mini Quiz (const list)
+│
+├── assets/
+│   ├── images/
+│   │   └── profile.jpg           ← foto profil (dipakai Image.asset + errorBuilder)
+│   └── data/
+│       └── student_data.json     ← student, learning_goal, courses (10 item)
+├── pubspec.yaml                  ← registrasi asset & dependency

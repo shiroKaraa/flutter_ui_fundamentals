@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'quiz_data.dart'; 
 
+// ===== IDENTITAS =====
 const String studentName = 'I Kadek Dwi Bajaskara';
 const String studentId = '2415051068';
 
-// ===== FUNCTION PEMBACA JSON =====
+// ===== PALET WARNA  =====
+class AppColors {
+  static const Color primary = Color(0xFF1565C0);
+  static const Color primarySoft = Color(0xFFE3F0FC);
+  static const Color success = Color(0xFF2E7D32);
+  static const Color successSoft = Color(0xFFE6F4EA);
+  static const Color warn = Color(0xFFEF6C00);
+  static const Color warnSoft = Color(0xFFFFF4E5);
+  static const Color muted = Color(0xFF607D8B);
+  static const Color bg = Color(0xFFF5F8FC);
+  static const Color border = Color(0xFFE3E8EF);
+}
+
 Future<Map<String, dynamic>> loadStudentData() async {
   final jsonString = await rootBundle.loadString(
     'assets/data/student_data.json',
@@ -17,27 +31,64 @@ void main() {
   runApp(const MyApp());
 }
 
-// ===== REUSABLE WIDGET: Kartu Statistik =====
-Widget buildStatCard(String value, String label, Color color, IconData icon) {
-  return Column(
-    children: [
-      Icon(icon, color: color, size: 24),
-      const SizedBox(height: 4),
-      Text(
-        value,
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: color,
-        ),
+// ===== REUSABLE: Summary Card =====
+Widget buildStatCard({
+  required String value,
+  required String label,
+  required IconData icon,
+  required Color color,
+}) {
+  return Expanded(
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0F000000),
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      const SizedBox(height: 4),
-      Text(label, style: const TextStyle(fontSize: 13)),
-    ],
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
+          ),
+        ],
+      ),
+    ),
   );
 }
 
-// ===== STATEFUL WIDGET: GreetingCard =====
+// ===== SECTION TITLE reusable =====
+Widget sectionTitle(String text) {
+  return Text(
+    text,
+    style: const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+      color: Colors.black87,
+    ),
+  );
+}
+
+// ===== GREETING CARD (TAHAP 9) =====
 class GreetingCard extends StatefulWidget {
   const GreetingCard({super.key});
 
@@ -66,61 +117,76 @@ class _GreetingCardState extends State<GreetingCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: const BorderSide(color: AppColors.border),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Latihan Interaksi',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
-              ),
+            const Row(
+              children: [
+                Icon(Icons.chat_bubble_outline,
+                    color: AppColors.primary, size: 18),
+                SizedBox(width: 8),
+                Text(
+                  'Latihan Interaksi',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 4),
             Text(
               '$studentId - $studentName',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
+              style: const TextStyle(fontSize: 11, color: Colors.black54),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             TextField(
               controller: controller,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Tulis pesan...',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.edit),
+                isDense: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                prefixIcon: const Icon(Icons.edit, size: 20),
+              ),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              onPressed: _tampilkanPesan,
+              icon: const Icon(Icons.send, size: 18),
+              label: const Text('Tampilkan'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
             const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: _tampilkanPesan,
-              icon: const Icon(Icons.send),
-              label: const Text('Tampilkan'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-            const SizedBox(height: 14),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.deepPurple.withOpacity(0.06),
-                borderRadius: BorderRadius.circular(8),
+                color: AppColors.primarySoft,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 message,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 13,
                   fontStyle: FontStyle.italic,
                   color: Colors.black87,
                 ),
@@ -133,29 +199,254 @@ class _GreetingCardState extends State<GreetingCard> {
   }
 }
 
-// ===== STATEful WIDGET: DashboardPage  =====
+// ===== MINI QUIZ CARD =====
+class MiniQuizCard extends StatefulWidget {
+  const MiniQuizCard({super.key});
+
+  @override
+  State<MiniQuizCard> createState() => _MiniQuizCardState();
+}
+
+class _MiniQuizCardState extends State<MiniQuizCard> {
+  // Data berasal dari file terpisah (lib/quiz_data.dart)
+  final List<Map<String, dynamic>> questions = quizQuestions;
+
+  int currentIndex = 0;
+  String? selected;
+  int score = 0;
+  bool finished = false;
+
+  void _pilihJawaban(String opsi) {
+    if (selected != null) return;
+    setState(() {
+      selected = opsi;
+      if (opsi == questions[currentIndex]['answer']) {
+        score++;
+      }
+    });
+  }
+
+  void _next() {
+    setState(() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        selected = null;
+      } else {
+        finished = true;
+      }
+    });
+  }
+
+  void _reset() {
+    setState(() {
+      currentIndex = 0;
+      selected = null;
+      score = 0;
+      finished = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: const BorderSide(color: AppColors.border),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.quiz_outlined,
+                    color: AppColors.success, size: 18),
+                const SizedBox(width: 8),
+                const Text(
+                  'Mini Quiz Akademik',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.success,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  finished
+                      ? 'Selesai'
+                      : 'Soal ${currentIndex + 1}/${questions.length}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.black54,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (finished) _buildHasil() else _buildSoal(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSoal() {
+    final item = questions[currentIndex];
+    final options = (item['options'] as List).cast<String>();
+    final answer = item['answer'] as String;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          item['q'] as String,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 10),
+        ...options.map((opsi) {
+          final isSelected = selected == opsi;
+          final isCorrect = opsi == answer;
+          final showFeedback = selected != null;
+
+          Color borderColor = AppColors.border;
+          Color bgColor = Colors.white;
+          if (showFeedback && isCorrect) {
+            borderColor = AppColors.success;
+            bgColor = AppColors.successSoft;
+          } else if (showFeedback && isSelected && !isCorrect) {
+            borderColor = Colors.red.shade400;
+            bgColor = const Color(0xFFFFEBEE);
+          }
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: InkWell(
+              onTap: () => _pilihJawaban(opsi),
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: borderColor),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      showFeedback && isCorrect
+                          ? Icons.check_circle
+                          : (showFeedback && isSelected
+                              ? Icons.cancel
+                              : Icons.radio_button_unchecked),
+                      size: 18,
+                      color: showFeedback && isCorrect
+                          ? AppColors.success
+                          : (showFeedback && isSelected
+                              ? Colors.red.shade400
+                              : AppColors.muted),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        opsi,
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+        if (selected != null)
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: _next,
+              icon: const Icon(Icons.arrow_forward, size: 16),
+              label: Text(
+                currentIndex < questions.length - 1
+                    ? 'Soal Berikutnya'
+                    : 'Lihat Skor',
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildHasil() {
+    final double persen = score / questions.length * 100;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 4),
+        Text(
+          'Skor kamu: $score / ${questions.length}',
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: AppColors.success,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Nilai: ${persen.round()}',
+          style: const TextStyle(fontSize: 13, color: Colors.black54),
+        ),
+        const SizedBox(height: 12),
+        ElevatedButton.icon(
+          onPressed: _reset,
+          icon: const Icon(Icons.refresh, size: 18),
+          label: const Text('Ulangi Quiz'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.success,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ===== DASHBOARD PAGE =====
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
+
   @override
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
   late Future<Map<String, dynamic>> studentFuture;
+
   @override
   void initState() {
     super.initState();
     studentFuture = loadStudentData();
   }
-  // Helper warna status
+
+  // ===== Helper status =====
   Color _statusColor(String status) {
     switch (status) {
       case 'done':
-        return Colors.green;
+        return AppColors.success;
       case 'active':
-        return Colors.orange;
+        return AppColors.warn;
       default:
-        return Colors.blueGrey;
+        return AppColors.muted;
     }
   }
 
@@ -181,16 +472,35 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  Widget _statusBadge(String status) {
+    final color = _statusColor(status);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        _statusLabel(status),
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: color,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F5FF),
+      backgroundColor: AppColors.bg,
       appBar: AppBar(
-        title: const Text('Flutter UI Fundamentals'),
+        title: const Text('Learning Dashboard'),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black87,
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
       ),
       body: SafeArea(
         child: FutureBuilder<Map<String, dynamic>>(
@@ -200,6 +510,7 @@ class _DashboardPageState extends State<DashboardPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
+
             // ===== 2. ERROR =====
             if (snapshot.hasError) {
               return Center(
@@ -213,218 +524,338 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               );
             }
+
             // ===== 3. DATA =====
             final data = snapshot.data!;
             final student = data['student'] as Map<String, dynamic>;
             final courses = data['courses'] as List<dynamic>;
+            final learningGoal = (data['learning_goal'] as String?) ??
+                'Belum ada learning goal.';
 
-            final jsonName = student['name'] as String;
-            final jsonNim = student['nim'] as String;
+            final jsonName = (student['name'] as String?) ?? studentName;
+            final jsonNim = (student['nim'] as String?) ?? studentId;
+            final jsonProgram =
+                (student['program'] as String?) ?? 'Mahasiswa';
+            final jsonSemester = student['semester'] ?? '-';
 
-            // Ringkasan courses
             final int totalCourses = courses.length;
-            final int completedCourses =
-                courses.where((c) => c['status'] == 'done').length;
+            final int completedCourses = courses
+                .where((c) =>
+                    (c as Map<String, dynamic>)['status'] == 'done')
+                .length;
+            final int progressPercent = totalCourses == 0
+                ? 0
+                : ((completedCourses / totalCourses) * 100).round();
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Column(
-                children: [
-                  const SizedBox(height: 8),
-
-                  // FOTO PROFIL
-                  const CircleAvatar(
-                    radius: 42,
-                    backgroundColor: Colors.deepPurple,
-                    backgroundImage: AssetImage('assets/images/profile.jpg'),
+            return Column(
+              children: [
+                // --- COMPACT IDENTITY CARD (fixed) ---
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                  child: _buildIdentityCard(
+                    name: jsonName,
+                    nim: jsonNim,
+                    program: jsonProgram,
+                    semester: jsonSemester,
                   ),
-                  const SizedBox(height: 12),
+                ),
 
-                  // CARD IDENTITAS (dari JSON)
-                  Card(
-                    elevation: 10,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            '$jsonNim - $jsonName',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Flutter UI Fundamentals',
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // DESKRIPSI MINAT
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurple.withOpacity(0.07),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.deepPurple.withOpacity(0.25),
-                        width: 1,
-                      ),
-                    ),
-                    child: const Text(
-                      'Saya tertarik pada pemrograman mobile karena ingin belajar membuat aplikasi yang menarik, interaktif, dan bermanfaat bagi pengguna.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        height: 1.4,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // ICON + TEKS
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.phone_android,
-                          color: Colors.deepPurple, size: 20),
-                      SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          'Mahasiswa Pendidikan Teknik Informatika',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // STATISTIK dari JSON
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      buildStatCard(
-                          '$totalCourses',
-                          'Topik',
-                          Colors.redAccent,
-                          Icons.book),
-                      buildStatCard(
-                          '$completedCourses',
-                          'Selesai',
-                          Colors.green,
-                          Icons.check_circle),
-                      buildStatCard(
-                        totalCourses == 0
-                          ? '0%'
-                          : '${((completedCourses / totalCourses) * 100).round()}%',
-                          'Progress',
-                          Colors.amber,
-                          Icons.trending_up),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // JUDUL + RINGKASAN
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Daftar Materi',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        '$completedCourses dari $totalCourses selesai',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.black54,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  // LIST COURSES dari JSON
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: courses.length + 1,
-                      itemBuilder: (context, index) {
-                        // Index 0: GreetingCard
-                        if (index == 0) {
-                          return const Padding(
-                            padding: EdgeInsets.only(bottom: 6),
-                            child: GreetingCard(),
-                          );
-                        }
-
-                        // Index >= 1: course dari JSON
-                        final course =
-                            courses[index - 1] as Map<String, dynamic>;
-                        final status = course['status'] as String;
-
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 6),
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              _statusIcon(status),
-                              color: _statusColor(status),
-                            ),
-                            title: Text(
-                              course['title'] as String,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
+                // --- KONTEN SCROLLABLE ---
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                    itemCount: 5 + courses.length,
+                    itemBuilder: (context, index) {
+                      // 0. Summary Cards
+                      if (index == 0) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Row(
+                            children: [
+                              buildStatCard(
+                                value: '$totalCourses',
+                                label: 'Total Topik',
+                                icon: Icons.book_outlined,
+                                color: AppColors.primary,
                               ),
-                            ),
-                            subtitle: Text(
-                              '${course['code']} • ${course['credits']} SKS',
-                            ),
-                            trailing: Text(
-                              _statusLabel(status),
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: _statusColor(status),
+                              const SizedBox(width: 10),
+                              buildStatCard(
+                                value: '$completedCourses',
+                                label: 'Selesai',
+                                icon: Icons.check_circle_outline,
+                                color: AppColors.success,
                               ),
-                            ),
+                              const SizedBox(width: 10),
+                              buildStatCard(
+                                value: '$progressPercent%',
+                                label: 'Progress',
+                                icon: Icons.trending_up,
+                                color: AppColors.primary,
+                              ),
+                            ],
                           ),
                         );
-                      },
+                      }
+
+                      // 1. Learning Goal
+                      if (index == 1) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              sectionTitle('Learning Goal'),
+                              const SizedBox(height: 8),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: AppColors.success
+                                        .withOpacity(0.25),
+                                  ),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.flag_outlined,
+                                        color: AppColors.success, size: 20),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        learningGoal,
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          height: 1.4,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      // 2. Greeting Card
+                      if (index == 2) {
+                        return const Padding(
+                          padding: EdgeInsets.only(bottom: 16),
+                          child: GreetingCard(),
+                        );
+                      }
+
+                      // 3. Mini Quiz
+                      if (index == 3) {
+                        return const Padding(
+                          padding: EdgeInsets.only(bottom: 16),
+                          child: MiniQuizCard(),
+                        );
+                      }
+
+                      // 4. Judul Daftar Materi
+                      if (index == 4) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                            children: [
+                              sectionTitle('Daftar Materi'),
+                              Text(
+                                '$completedCourses dari $totalCourses selesai',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black54,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      // 5..N. Course Items
+                      final course = courses[index - 5];
+                      if (course is! Map<String, dynamic>) {
+                        return const SizedBox.shrink();
+                      }
+                      final status =
+                          (course['status'] as String?) ?? 'planned';
+                      return _buildCourseCard(course, status);
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  // ===== Compact Identity Card (foto dengan errorBuilder) =====
+  Widget _buildIdentityCard({
+    required String name,
+    required String nim,
+    required String program,
+    required dynamic semester,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0F000000),
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Foto profil dengan fallback aman
+          CircleAvatar(
+            radius: 28,
+            backgroundColor: AppColors.primarySoft,
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/profile.jpg',
+                width: 56,
+                height: 56,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.person,
+                    size: 32,
+                    color: AppColors.primary,
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: Colors.black87,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'NIM: $nim',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '$program • Semester $semester',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.black45,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===== Course Card (null-safety defensif) =====
+  Widget _buildCourseCard(Map<String, dynamic> course, String status) {
+    final color = _statusColor(status);
+
+    // Null-safety defensif untuk semua field
+    final title = (course['title'] as String?) ?? 'Tanpa Judul';
+    final code = (course['code'] as String?) ?? '-';
+    final creditsRaw = course['credits'];
+    final credits = creditsRaw?.toString() ?? '-';
+    final description = (course['description'] as String?) ?? '';
+    final dosen = (course['dosen'] as String?) ?? '-';
+
+    return Card(
+      elevation: 0,
+      color: Colors.white,
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: color.withOpacity(0.20)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Icon(_statusIcon(status), color: color, size: 24),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '$code • $credits SKS',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  if (description.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.black45,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 4),
+                  Text(
+                    'Dosen: $dosen',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.black45,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                 ],
               ),
-            );
-          },
+            ),
+            const SizedBox(width: 8),
+            _statusBadge(status),
+          ],
         ),
       ),
     );
@@ -437,9 +868,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: DashboardPage(),
+      title: 'Learning Dashboard',
+      theme: ThemeData(
+        primaryColor: AppColors.primary,
+        scaffoldBackgroundColor: AppColors.bg,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          primary: AppColors.primary,
+        ),
+      ),
+      home: const DashboardPage(),
     );
   }
 }
