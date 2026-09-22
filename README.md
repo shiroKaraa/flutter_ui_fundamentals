@@ -176,3 +176,49 @@ flutter_ui_fundamentals/
 │   └── data/
 │       └── student_data.json     ← student, learning_goal, courses (10 item)
 ├── pubspec.yaml                  ← registrasi asset & dependency
+
+DEBUG — Uji Fallback Asset (errorBuilder) :
+
+Tujuan uji: Memastikan errorBuilder pada Image.asset bekerja sesuai rencana, yaitu aplikasi tidak crash dan otomatis menampilkan icon default (Icons.person) saat file profile.jpg gagal dimuat.
+
+Skenario uji: Saya sengaja me-rename file assets/images/profile.jpg → profiles.jpg (atau menghapusnya sementara), lalu melakukan hot restart (R) untuk memicu ulang pembacaan asset.
+
+Gejala error yang muncul di terminal:
+Could not update files on device: PathNotFoundException: Cannot open file,
+path = 'D:\...\flutter_ui_fundamentalss\assets\images\Profile.jpg'
+(OS Error: The system cannot find the file specified, errno = 2)
+
+Could not update files on device: PathNotFoundException: Cannot open file,
+path = 'D:\...\flutter_ui_fundamentalss\assets\images\profile.jpg'
+(OS Error: The system cannot find the file specified, errno = 2)
+
+Pesan ini muncul dua kali karena Flutter mencoba membaca file dengan dua nama berbeda (Profile.jpg dan profile.jpg) — keduanya tidak ditemukan karena file fisiknya memang sudah di-rename.
+
+Penyebab:
+1. File fisik profile.jpg benar-benar tidak ada di folder assets/images/ (karena di-rename).
+2. pubspec.yaml sebelumnya juga mendaftarkan file individual - assets/images/profile.jpg — baris ini tidak perlu dan justru membuat proses pencarian lebih kaku.
+3. Perbedaan huruf besar/kecil: Profile.jpg vs profile.jpg — Flutter asset loader bersifat case-sensitive, jadi kedua nama dianggap file berbeda.
+
+Perbaikan yang dilakukan:
+1. pubspec.yaml disederhanakan — cukup daftarkan folder, bukan file individual:
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/data/
+    - assets/images/profile.jpg <- Saya Hapus 
+2. Jalankan flutter clean + flutter pub get + hot restart (R) agar asset di-bundle ulang.
+
+Hasil uji:
+✅ errorBuilder bekerja dengan menampilkan Icon(Icons.person) berwarna biru di dalam CircleAvatar saat saya Merubah nama gambar dari profile.jpg -> profiles.jpg
+✅ Nama, NIM, dan seluruh konten dashboard lainnya tetap tampil normal.
+✅ Setelah nama file profiles.jpg dikembalikan Menjadi profile.jpg dan hot restart (R), foto profil muncul kembali tanpa error.
+
+Tahap 15 :
+
+Dari debugging ini saya belajar tiga hal: (1) RenderFlex Overflow diatasi dengan Expanded + overflow: TextOverflow.ellipsis; (2) Asset tidak ditemukan diatasi dengan memastikan file fisik ada, pubspec.yaml hanya mendaftarkan folder, nama file konsisten huruf kecil, lalu flutter clean + pub get + hot restart (R), dan saya memakai Image.asset(... errorBuilder ...) agar aplikasi tetap tampil Icon(Icons.person) tanpa crash; (3) error state pada FutureBuilder dan null-safety (as String? ?? 'default') wajib ada agar aplikasi tetap stabil meski asset atau JSON bermasalah.
+
+Tahap 16 :
+
+
+
