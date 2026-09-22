@@ -43,3 +43,7 @@ Tahap 6 :
 Tahap 7 :
 
 Card mengelompokkan informasi dan memberikan elevation (bayangan) dan sudut melengkung dengan RoundedRectangleBorder. Padding memberi jarak dalam, sedangkan margin (di Container) memberi jarak luar. Container + BoxDecoration dipakai untuk membuat elemen ringkasan dengan background & border kustom. SizedBox menjaga jarak antar bagian tetap konsisten.
+
+Tahap 8 :
+
+Reusable widget mengurangi duplikasi kode. buildStatCard dipanggil 3× dengan data berbeda (value, label, warna), tapi kode hanya ditulis sekali. Kalau perlu ubah styling, cukup edit function-nya saja. NIM + Nama tetap tampil di halaman utama.

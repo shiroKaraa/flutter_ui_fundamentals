@@ -7,6 +7,25 @@ void main() {
   runApp(const MyApp());
 }
 
+Widget buildStatCard(String value, String label, Color color, IconData icon) {
+  return Column(
+    children: [
+      Icon(icon, color: color, size: 24),
+      const SizedBox(height: 4),
+      Text(
+        value,
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: color,
+        ),
+      ),
+      const SizedBox(height: 4),
+      Text(label, style: const TextStyle(fontSize: 13)),
+    ],
+  );
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -15,7 +34,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: const Color(0xFFF8F5FF), 
+        backgroundColor: const Color(0xFFF8F5FF),
         appBar: AppBar(
           title: const Text('Flutter UI Fundamentals'),
           centerTitle: true,
@@ -24,7 +43,7 @@ class MyApp extends StatelessWidget {
           foregroundColor: Colors.black87,
         ),
         body: Center(
-          child: SingleChildScrollView( 
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -102,7 +121,8 @@ class MyApp extends StatelessWidget {
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.phone_android, color: Colors.deepPurple, size: 22),
+                    Icon(Icons.phone_android,
+                        color: Colors.deepPurple, size: 22),
                     SizedBox(width: 8),
                     Text(
                       'Mahasiswa Pendidikan Teknik Informatika',
@@ -114,51 +134,12 @@ class MyApp extends StatelessWidget {
                 const SizedBox(height: 28),
 
                 // ===== STATISTIK =====
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Column(
-                      children: [
-                        Text(
-                          '8',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.redAccent,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text('Widget', style: TextStyle(fontSize: 13)),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          '4',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text('Layout', style: TextStyle(fontSize: 13)),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          '1',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text('State', style: TextStyle(fontSize: 13)),
-                      ],
-                    ),
+                    buildStatCard('8', 'Widget', Colors.redAccent, Icons.widgets),
+                    buildStatCard('4', 'Layout', Colors.amber, Icons.dashboard),
+                    buildStatCard('1', 'State', Colors.green, Icons.memory),
                   ],
                 ),
               ],
