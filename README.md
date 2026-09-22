@@ -40,3 +40,6 @@ Tahap 6 :
 -	Bisa disarangkan → Row dapat berisi beberapa Column, misalnya untuk membuat 3 bagian statistik yang tersusun sejajar.
 
 
+Tahap 7 :
+
+Card mengelompokkan informasi dan memberikan elevation (bayangan) dan sudut melengkung dengan RoundedRectangleBorder. Padding memberi jarak dalam, sedangkan margin (di Container) memberi jarak luar. Container + BoxDecoration dipakai untuk membuat elemen ringkasan dengan background & border kustom. SizedBox menjaga jarak antar bagian tetap konsisten.
